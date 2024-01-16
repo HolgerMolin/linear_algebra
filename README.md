@@ -16,5 +16,6 @@ To do:
  - Batch_norm
  - Dropout
  - Convolutions
+ - Make error messages more expressive
  
 A_ij = A_ji

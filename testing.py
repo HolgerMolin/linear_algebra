@@ -2,6 +2,7 @@ from matrix import Matrix
 import unittest
 import torch
 from random import uniform
+import matrix
 
 def tensor_to_matrix(tensor: torch.Tensor) -> Matrix:
     if tensor.dim() != 2:
@@ -73,9 +74,26 @@ class MatrixTests(unittest.TestCase):
                         self.assertAlmostEqual(C_torch[i, j].item(), C_mat[i, j], delta=1e-6)
         print("Passed matrix multiplication test")
 
+    def test_hadamard(self):
+        shapes = [(i, j) for j in range(1, 10) for i in range(1, 10)]
+        for shape in shapes:
+            for _ in range(NUM_SAMPLES):
+                A_torch = torch.rand(shape)
+                B_torch = torch.rand(shape)
+                A_mat = tensor_to_matrix(A_torch)
+                B_mat = tensor_to_matrix(B_torch)
+
+                C_torch = A_torch * B_torch
+                C_mat = matrix.hadamard(A_mat, B_mat)
+                for i in range(shape[0]):
+                    for j in range(shape[1]):
+                        self.assertAlmostEqual(C_torch[i, j].item(), C_mat[i, j], delta=1e-6)
+        print("Passed hadamard test")
+
 
 test = MatrixTests()
 test.test_matrix_trace()
 test.test_matrix_addition()
 test.test_matrix_scalar_multiplication()
 test.test_matrix_multiplication()
+test.test_hadamard()

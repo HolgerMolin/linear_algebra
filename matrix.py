@@ -1,21 +1,60 @@
 from __future__ import annotations
+from random import normalvariate
+from random import uniform
 
 class MatrixShapeException(Exception):
     def __init__(self, message = "Matrix shape mismatch") -> None:
         self.message = message
         super().__init__()
 
-def zero_matrix(shape: tuple[int]):
-    pass
+def fill_matrix(shape: tuple[int], value: int | float):
+    if not isinstance(shape, tuple):
+        raise TypeError("Requires tuple")
+    if len(shape) != 2:
+        raise ValueError("Shape tuple should be length 2")
+    output_matrix = []
+    for _ in range(shape[1]):
+        output_column = []
+        for __ in range(shape[0]):
+            output_column.append(value)
+        output_matrix.append(output_column)
+    return Matrix(output_matrix)
 
-def one_matrix(shape: tuple[int]):
-    pass
+def rand_matrix(shape: tuple[int], random_type: str = "uniform" or "normal", min: float = 0, max: float = 1, mean: float = 0, stddev: float = 1):
+    if not isinstance(shape, tuple):
+        raise TypeError("Requires tuple")
+    if len(shape) != 2:
+        raise ValueError("Shape tuple should be length 2")
+    if random_type == 'unform':
+        output_matrix = []
+        for _ in range(shape[1]):
+            output_column = []
+            for __ in range(shape[0]):
+                output_column.append(normalvariate(mean, stddev))
+            output_matrix.append(output_column)
+        return Matrix(output_matrix)
+    elif random_type == 'normal':
+        output_matrix = []
+        for _ in range(shape[1]):
+            output_column = []
+            for __ in range(shape[0]):
+                output_column.append(uniform(min, max))
+            output_matrix.append(output_column)
+        return Matrix(output_matrix)
+    else:
+        raise ValueError(f"Unsupported random_type: {random_type}")
 
-def rand_matrix(shape: tuple[int], random_type: str = "uniform" or "normal"):
-    pass
 
 def hadamard(A: Matrix, B:Matrix):
-    pass
+    if A.shape != B.shape:
+        raise MatrixShapeException()
+    output_matrix = []
+    for column_index in range(len(A.elements)):
+        output_column = []
+        for element_index in range(len(A.elements[column_index])):
+            output_column.append(A[column_index, element_index] * B[column_index, element_index])
+        output_matrix.append(output_column)
+    return Matrix(output_matrix)
 
 class Matrix:
     def __init__(self, elements: list[list[float]] | list[list[int]]):
